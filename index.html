@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI RESCUE MACHINE — Round 1</title>
+<style>
+:root{
+  --bg:#060b0d; --panel:#0c161a; --line:#123028; --neon:#39ff9c; --cyan:#3ddcff;
+  --text:#dff7ee; --muted:#7fa89a; --danger:#ff5566; --warn:#ffcc55;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; min-height:100%; font-family:'Segoe UI',Roboto,Arial,sans-serif; color:var(--text);
+  background:
+    linear-gradient(rgba(6,11,13,.94),rgba(6,11,13,.97)),
+    repeating-linear-gradient(0deg,rgba(57,255,156,.05) 0 1px,transparent 1px 40px),
+    repeating-linear-gradient(90deg,rgba(61,220,255,.05) 0 1px,transparent 1px 40px),
+    radial-gradient(circle at 20% 10%,rgba(57,255,156,.12),transparent 40%),
+    radial-gradient(circle at 80% 90%,rgba(61,220,255,.12),transparent 40%),
+    #060b0d;
+  background-attachment:fixed;
+}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px;}
+header{text-align:center;margin-bottom:22px;}
+h1{font-size:clamp(22px,5vw,34px);letter-spacing:2px;margin:0;color:var(--neon);text-shadow:0 0 14px rgba(57,255,156,.5);}
+.sub{color:var(--cyan);letter-spacing:3px;font-size:12px;margin-top:6px;text-transform:uppercase;}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 0 24px rgba(57,255,156,.06);}
+.field{margin-bottom:14px;}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+input{width:100%;padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:#08120f;color:var(--text);font-size:15px;}
+input:focus{outline:none;border-color:var(--neon);}
+.btn{cursor:pointer;border:none;border-radius:9px;padding:13px 20px;font-weight:700;font-size:15px;letter-spacing:.5px;}
+.btn-main{background:linear-gradient(90deg,var(--neon),var(--cyan));color:#04140d;width:100%;}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.row{display:flex;gap:10px;flex-wrap:wrap;}
+.hide{display:none !important;}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.pill{background:#08160f;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--cyan);}
+.timer{font-size:20px;font-weight:800;color:var(--neon);}
+.timer.low{color:var(--danger);}
+.qtext{font-size:18px;line-height:1.5;margin:6px 0 18px;}
+.opt{display:block;width:100%;text-align:left;background:#08120f;border:1px solid var(--line);border-radius:10px;padding:13px 14px;margin-bottom:10px;color:var(--text);cursor:pointer;font-size:15px;}
+.opt.sel{border-color:var(--neon);background:rgba(57,255,156,.09);}
+.navrow{display:flex;justify-content:space-between;margin-top:18px;gap:10px;}
+.warn-banner{background:rgba(255,85,102,.12);border:1px solid var(--danger);color:var(--danger);padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:14px;}
+.progress-bar{height:6px;background:#08120f;border-radius:4px;overflow:hidden;margin:12px 0 4px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--neon),var(--cyan));}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.stat{background:#08120f;border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;}
+.stat b{display:block;font-size:22px;color:var(--neon);}
+.badge{display:inline-block;padding:6px 16px;border-radius:20px;font-weight:700;margin-top:6px;}
+.badge.strong{background:rgba(57,255,156,.15);color:var(--neon);border:1px solid var(--neon);}
+.badge.border{background:rgba(255,204,85,.15);color:var(--warn);border:1px solid var(--warn);}
+.badge.elim{background:rgba(255,85,102,.15);color:var(--danger);border:1px solid var(--danger);}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px;}
+table{width:100%;border-collapse:collapse;font-size:13px;overflow-x:auto;display:block;}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;}
+th{color:var(--cyan);}
+.smallmuted{color:var(--muted);font-size:12px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🤖 AI RESCUE MACHINE</h1>
+  <div class="sub">Round 1 — AI Survival: Eliminator</div>
+</header>
+
+<!-- REGISTRATION -->
+<div id="scr-reg" class="card">
+  <div class="field"><label>Team Name *</label><input id="r-team"></div>
+  <div class="field"><label>Participant 1 Name *</label><input id="r-p1"></div>
+  <div class="field"><label>Participant 2 Name *</label><input id="r-p2"></div>
+  <div class="field"><label>College Name *</label><input id="r-college"></div>
+  <div class="field"><label>Department *</label><input id="r-dept"></div>
+  <div class="field"><label>Email / Contact (optional)</label><input id="r-contact"></div>
+  <p class="smallmuted">10 questions · 10 minutes · Tab switching is tracked. Once you start, you cannot pause or restart.</p>
+  <button class="btn btn-main" onclick="startQuiz()">START QUIZ</button>
+</div>
+
+<!-- QUIZ -->
+<div id="scr-quiz" class="card hide">
+  <div id="warnBanner" class="warn-banner hide"></div>
+  <div class="topbar">
+    <span class="pill" id="qProgress">Question 1 of 10</span>
+    <span class="timer" id="timerDisp">10:00</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:10%"></div></div>
+  <div class="qtext" id="qText"></div>
+  <div id="optsBox"></div>
+  <div class="navrow">
+    <button class="btn btn-ghost" id="btnPrev" onclick="nav(-1)">◀ Previous</button>
+    <button class="btn btn-main" id="btnNext" style="max-width:160px" onclick="nav(1)">Next ▶</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="scr-result" class="card hide">
+  <h2 style="color:var(--neon);margin-top:0">Submission Received</h2>
+  <p id="resTeamLine" class="smallmuted"></p>
+  <div class="result-grid">
+    <div class="stat"><b id="resScore">-</b>Score / 10</div>
+    <div class="stat"><b id="resCorrect">-</b>Correct</div>
+    <div class="stat"><b id="resIncorrect">-</b>Incorrect</div>
+    <div class="stat"><b id="resTime">-</b>Time Taken</div>
+  </div>
+  <div style="text-align:center"><span class="badge" id="resBadge"></span></div>
+  <p class="smallmuted" style="text-align:center;margin-top:14px">Correct answers are not shown here. Results will be reviewed by the organizers.</p>
+  <button class="btn btn-ghost" style="width:100%;margin-top:10px" onclick="downloadResult()">⬇ Download My Result (send this file to organizers)</button>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="modalConfirm" class="modal-bg hide">
+  <div class="card" style="max-width:380px">
+    <h3 style="margin-top:0;color:var(--cyan)">Submit Final Answers?</h3>
+    <p class="smallmuted" id="confirmText">You have answered X of 10 questions. This cannot be undone.</p>
+    <div class="row">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-main" style="flex:1" onclick="doSubmit()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<footer>AI RESCUE MACHINE · Eliminator Round · Good luck, survivor.</footer>
+</div>
+
+<!-- ================= ADMIN PANEL (open this page with ?admin=1) ================= -->
+<div id="scr-admin" class="card hide" style="max-width:760px;margin:0 auto;">
+  <h2 style="color:var(--cyan);margin-top:0">🛠 Organizer Panel</h2>
+  <p class="smallmuted">Ask each team to click "Download My Result" after submitting, then upload all of those files here (multi-select supported). This page has no live server, so results are aggregated locally from the files teams send you.</p>
+  <input type="file" id="admFiles" multiple accept="application/json" onchange="admLoad(event)">
+  <div class="row" style="margin-top:12px">
+    <button class="btn btn-ghost" onclick="admSort('score')">Sort by Score</button>
+    <button class="btn btn-ghost" onclick="admSort('timeTakenSec')">Sort by Time</button>
+    <button class="btn btn-main" style="max-width:200px" onclick="admExportCSV()">⬇ Export CSV</button>
+  </div>
+  <div style="overflow-x:auto;margin-top:14px">
+  <table id="admTable">
+    <thead><tr><th>Team</th><th>Participants</th><th>College</th><th>Score</th><th>Correct</th><th>Wrong</th><th>Time Taken</th><th>Tab Switches</th><th>Status</th><th>Submitted At</th></tr></thead>
+    <tbody id="admBody"></tbody>
+  </table>
+  </div>
+</div>
+
+<script>
+/* ---------------- QUESTION BANK ---------------- */
+const QUESTIONS = [
+{cat:"Prompt Engineering", q:"You want an AI to create a disaster-management plan. Which prompt contains the strongest combination of context, constraints, objective and output format?",
+ opts:["\u201cCreate a disaster plan.\u201d","\u201cYou are a disaster expert. Give me a good plan.\u201d","\u201cAct as a disaster-management expert. A village of 500 people has lost electricity and communication after a cyclone. Create a 24-hour emergency plan using only locally available resources. Prioritize drinking water, medical emergencies and communication. Present the response as a numbered action plan.\u201d","\u201cExplain everything about disaster management and survival.\u201d"], correct:2},
+{cat:"Hallucination", q:"An AI confidently provides a scientific fact that sounds believable, but you suspect it may be incorrect. What is the most appropriate response?",
+ opts:["Trust it because the AI answered confidently","Ask the AI to repeat the same answer","Verify the claim using reliable external sources","Assume every AI-generated fact is false"], correct:2},
+{cat:"Constraint Following", q:"You give an AI this instruction: \u201cYou may use only a knife, rope and water bottle.\u201d The AI recommends a GPS, tent, satellite phone, lighter and knife. What is the primary problem?",
+ opts:["The AI is too creative","The AI failed to follow the resource constraint","The AI used too few words","The AI misunderstood the English language"], correct:1},
+{cat:"Ambiguous Prompt", q:"Which prompt has the greatest ambiguity?",
+ opts:["\u201cExplain machine learning in 100 words for a beginner.\u201d","\u201cCompare Python and Java based on execution speed, syntax and common use cases.\u201d","\u201cTell me about AI.\u201d","\u201cCreate a 5-step emergency plan for a team trapped in a forest.\u201d"], correct:2},
+{cat:"Prompt Structure", q:"Consider this prompt: \u201cAct as an experienced survival instructor. We are two students trapped in a forest with 2 litres of water, a knife and a flashlight. We have 12 hours before sunset. Give us a safe action plan in chronological order and do not assume that we possess any other equipment.\u201d What element is primarily represented by: \u201cDo not assume that we possess any other equipment.\u201d",
+ opts:["Role","Context","Constraint","Output format"], correct:2},
+{cat:"Context Matters", q:"Team A asks: \u201cHow can we survive in a desert?\u201d Team B asks: \u201cWe are two people lost in a desert with 3 litres of water, a compass and a mobile phone with 10% battery. We don't know our location and have 6 hours before sunset. Create a prioritized survival and rescue plan using only these resources.\u201d Why is Team B's prompt generally more useful?",
+ opts:["It uses more complicated English","It provides relevant context and constraints","It forces the AI to always give a correct answer","It gives the AI access to the internet"], correct:1},
+{cat:"AI Reasoning", q:"An AI is asked: \u201cI have 3 apples. I give 1 apple to Ravi. How many apples do I have?\u201d The AI answers 2. Then the user says: \u201cActually, Ravi gave the apple back to me.\u201d What should the correct answer now be?",
+ opts:["1","2","3","The AI must always keep its original answer"], correct:2},
+{cat:"Information Reliability", q:"Which statement about AI-generated information is the most accurate?",
+ opts:["AI-generated information is always factually correct.","AI cannot generate information it wasn't explicitly trained on.","AI can generate plausible but incorrect information, so important claims may need verification.","AI intentionally lies whenever it doesn't know something."], correct:2},
+{cat:"Prompt Improvement", q:"You initially give this prompt: \u201cMake a plan to escape.\u201d Which modification would most significantly improve the prompt?",
+ opts:["\u201cMake a really, really good plan.\u201d","\u201cPlease make the plan.\u201d","\u201cYou are a rescue expert. We are trapped inside an abandoned building with two exits, no electricity and one flashlight. Create a safe step-by-step escape plan and explain the priority of each action.\u201d","\u201cMake a longer plan with more words.\u201d"], correct:2},
+{cat:"Final Challenge", q:"You give an AI this instruction: \u201cYou are stranded on an island. You have a knife, rope, two bottles of water and a mobile phone with 10% battery. Create a survival plan. You are not allowed to assume anything that isn't mentioned.\u201d The AI responds: \u201cFirst, use your GPS to locate the nearest settlement. Then use your satellite phone to contact rescue services. Build a tent using the camping equipment you brought.\u201d What is the best criticism of this response?",
+ opts:["The response is too short.","The AI failed to respect the stated constraints and introduced unavailable resources.","The AI should only discuss food.","The AI should use more technical vocabulary."], correct:1}
+];
+
+const DURATION = 600; // seconds
+let state = null, timerInt = null, fsRequested = false;
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+function buildPaper(){
+  const order = shuffle([...Array(QUESTIONS.length).keys()]);
+  return order.map(qi=>{
+    const q = QUESTIONS[qi];
+    const optOrder = shuffle(q.opts.map((t,i)=>({t,i})));
+    const newCorrect = optOrder.findIndex(o=>o.i===q.correct);
+    return {cat:q.cat, q:q.q, opts:optOrder.map(o=>o.t), correct:newCorrect, chosen:null};
+  });
+}
+
+function startQuiz(){
+  const team=v('r-team'),p1=v('r-p1'),p2=v('r-p2'),college=v('r-college'),dept=v('r-dept');
+  if(!team||!p1||!p2||!college||!dept){alert('Please fill all required fields.');return;}
+  if(localStorage.getItem('arm_submitted_'+slug(team))){alert('This team has already submitted the quiz. Restart is not allowed.');return;}
+  state = {
+    team, p1, p2, college, dept, contact:v('r-contact'),
+    paper: buildPaper(), idx:0, tabSwitches:0, startTs: Date.now(), remaining: DURATION
+  };
+  document.getElementById('scr-reg').classList.add('hide');
+  document.getElementById('scr-quiz').classList.remove('hide');
+  try{ if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
+  document.addEventListener('contextmenu', e=>e.preventDefault());
+  document.addEventListener('visibilitychange', onVis);
+  window.addEventListener('beforeunload', beforeUnload);
+  renderQ();
+  timerInt = setInterval(tick, 1000);
+}
+function v(id){return document.getElementById(id).value.trim();}
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-');}
+
+function onVis(){
+  if(document.hidden && state){
+    state.tabSwitches++;
+    const b=document.getElementById('warnBanner');
+    b.textContent='⚠ Tab switch detected (#'+state.tabSwitches+'). This is being recorded and may affect your standing.';
+    b.classList.remove('hide');
+  }
+}
+function beforeUnload(e){ if(state){ e.preventDefault(); e.returnValue=''; } }
+
+function tick(){
+  if(!state) return;
+  state.remaining--;
+  const m=Math.floor(state.remaining/60), s=state.remaining%60;
+  const disp=document.getElementById('timerDisp');
+  disp.textContent = (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  disp.classList.toggle('low', state.remaining<=60);
+  if(state.remaining<=0){ clearInterval(timerInt); doSubmit(true); }
+}
+
+function renderQ(){
+  const p = state.paper[state.idx];
+  document.getElementById('qProgress').textContent = 'Question '+(state.idx+1)+' of '+state.paper.length;
+  document.getElementById('progFill').style.width = ((state.idx+1)/state.paper.length*100)+'%';
+  document.getElementById('qText').innerHTML = '<span style="color:var(--cyan);font-size:12px;letter-spacing:1px">'+p.cat.toUpperCase()+'</span><br>'+p.q;
+  const box=document.getElementById('optsBox'); box.innerHTML='';
+  p.opts.forEach((o,i)=>{
+    const d=document.createElement('button');
+    d.className='opt'+(p.chosen===i?' sel':'');
+    d.textContent=String.fromCharCode(65+i)+') '+o;
+    d.onclick=()=>{p.chosen=i; renderQ();};
+    box.appendChild(d);
+  });
+  document.getElementById('btnPrev').disabled = state.idx===0;
+  document.getElementById('btnNext').textContent = state.idx===state.paper.length-1 ? 'Finish ▶' : 'Next ▶';
+}
+function nav(dir){
+  if(dir>0 && state.idx===state.paper.length-1){ openConfirm(); return; }
+  state.idx = Math.min(state.paper.length-1, Math.max(0, state.idx+dir));
+  renderQ();
+}
+function openConfirm(){
+  const answered = state.paper.filter(p=>p.chosen!==null).length;
+  document.getElementById('confirmText').textContent = 'You have answered '+answered+' of '+state.paper.length+' questions. This cannot be undone.';
+  document.getElementById('modalConfirm').classList.remove('hide');
+}
+function closeModal(){ document.getElementById('modalConfirm').classList.add('hide'); }
+
+function doSubmit(auto){
+  closeModal();
+  if(timerInt) clearInterval(timerInt);
+  document.removeEventListener('visibilitychange', onVis);
+  window.removeEventListener('beforeunload', beforeUnload);
+  try{ if(document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }catch(e){}
+
+  const correctCount = state.paper.filter(p=>p.chosen===p.correct).length;
+  const wrongCount = state.paper.filter(p=>p.chosen!==null && p.chosen!==p.correct).length;
+  const score = correctCount;
+  const timeTakenSec = Math.round((Date.now()-state.startTs)/1000);
+  let status='Eliminated', badgeClass='elim';
+  if(score>=8){status='Strong Performance';badgeClass='strong';}
+  else if(score>=6){status='Borderline';badgeClass='border';}
+
+  const result = {
+    team:state.team, p1:state.p1, p2:state.p2, college:state.college, dept:state.dept, contact:state.contact,
+    score, correctCount, wrongCount, timeTakenSec, tabSwitches:state.tabSwitches,
+    status, submittedAt:new Date().toISOString(), autoSubmitted: !!auto===true
+  };
+  localStorage.setItem('arm_submitted_'+slug(state.team), '1');
+  localStorage.setItem('arm_result_'+slug(state.team), JSON.stringify(result));
+  window.lastResult = result;
+
+  document.getElementById('scr-quiz').classList.add('hide');
+  document.getElementById('scr-result').classList.remove('hide');
+  document.getElementById('resTeamLine').textContent = result.team+' — '+result.p1+' & '+result.p2+' ('+result.college+', '+result.dept+')';
+  document.getElementById('resScore').textContent = score;
+  document.getElementById('resCorrect').textContent = correctCount;
+  document.getElementById('resIncorrect').textContent = wrongCount;
+  const m=Math.floor(timeTakenSec/60), s=timeTakenSec%60;
+  document.getElementById('resTime').textContent = m+'m '+s+'s';
+  const badge = document.getElementById('resBadge');
+  badge.textContent = status; badge.className = 'badge '+badgeClass;
+}
+
+function downloadResult(){
+  if(!window.lastResult) return;
+  const blob = new Blob([JSON.stringify(window.lastResult,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'arm-result-'+slug(window.lastResult.team)+'.json';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ---------------- ADMIN PANEL ---------------- */
+let admRows = [];
+function admLoad(ev){
+  const files = Array.from(ev.target.files);
+  let pending = files.length;
+  files.forEach(f=>{
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      try{ const r = JSON.parse(reader.result);
+        if(!admRows.find(x=>x.team===r.team && x.submittedAt===r.submittedAt)) admRows.push(r);
+      }catch(e){}
+      pending--; if(pending===0) admRender();
+    };
+    reader.readAsText(f);
+  });
+}
+function admRender(){
+  const body = document.getElementById('admBody'); body.innerHTML='';
+  admRows.forEach(r=>{
+    const tr = document.createElement('tr');
+    const m=Math.floor(r.timeTakenSec/60), s=r.timeTakenSec%60;
+    tr.innerHTML = '<td>'+esc(r.team)+'</td><td>'+esc(r.p1)+' & '+esc(r.p2)+'</td><td>'+esc(r.college)+'</td>'+
+      '<td>'+r.score+'/10</td><td>'+r.correctCount+'</td><td>'+r.wrongCount+'</td>'+
+      '<td>'+m+'m '+s+'s</td><td>'+r.tabSwitches+'</td><td>'+esc(r.status)+'</td><td>'+new Date(r.submittedAt).toLocaleString()+'</td>';
+    body.appendChild(tr);
+  });
+}
+function admSort(field){
+  admRows.sort((a,b)=> field==='score' ? b.score-a.score : a.timeTakenSec-b.timeTakenSec);
+  admRender();
+}
+function admExportCSV(){
+  const headers=['Team','Participant1','Participant2','College','Department','Score','Correct','Wrong','TimeTakenSec','TabSwitches','Status','SubmittedAt'];
+  const lines=[headers.join(',')];
+  admRows.forEach(r=>{
+    lines.push([r.team,r.p1,r.p2,r.college,r.dept,r.score,r.correctCount,r.wrongCount,r.timeTakenSec,r.tabSwitches,r.status,r.submittedAt]
+      .map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','));
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ai-rescue-machine-results.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+/* ---------------- ROUTING ---------------- */
+if(new URLSearchParams(location.search).get('admin')==='1'){
+  document.getElementById('scr-reg').classList.add('hide');
+  document.getElementById('scr-admin').classList.remove('hide');
+}
+</script>
+</body>
+</html>
